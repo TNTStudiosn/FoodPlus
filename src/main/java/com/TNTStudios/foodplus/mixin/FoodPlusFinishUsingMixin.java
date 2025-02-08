@@ -19,27 +19,27 @@ import java.util.List;
 public abstract class FoodPlusFinishUsingMixin {
 
     /**
-     * Inyectamos al final del método finishUsing para que, al consumir un alimento que
-     * tenga en su NBT la información de una poción (es decir, las claves "Potion" o "CustomPotionEffects"),
-     * se extraigan y apliquen los efectos al usuario.
+     * Inyectamos al principio del método finishUsing para que, al consumir un alimento
+     * que tenga en su NBT la información de una poción (es decir, las claves "Potion" o "CustomPotionEffects"),
+     * se extraigan y apliquen los efectos al usuario antes de que se pierda el NBT.
      */
-    @Inject(method = "finishUsing", at = @At("TAIL"))
+    @Inject(method = "finishUsing", at = @At("HEAD"))
     private void foodPlus_finishUsing(ItemStack stack, World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
-        // Ejecutamos solo en el servidor.
+        // Solo se ejecuta en el servidor.
         if (world.isClient()) {
             return;
         }
-        // Solo procesamos si el item es alimento y posee en su NBT datos de poción.
+        // Procesamos únicamente si el item es alimento y posee en su NBT datos de poción.
         if (stack.getItem().getFoodComponent() != null && stack.hasNbt() &&
                 (stack.getNbt().contains("Potion") || stack.getNbt().contains("CustomPotionEffects"))) {
 
-            // Obtenemos la poción base a partir del NBT.
+            // Obtenemos la poción base usando el NBT (la clave "Potion")
             Potion potion = PotionUtil.getPotion(stack);
+            // Extraemos la lista de efectos base y custom (definidos en "CustomPotionEffects")
             List<StatusEffectInstance> baseEffects = potion.getEffects();
-            // Obtenemos los efectos custom (si existieran) definidos en el NBT.
             List<StatusEffectInstance> customEffects = PotionUtil.getCustomPotionEffects(stack);
 
-            // Aplicamos los efectos de la poción base.
+            // Aplicamos los efectos base.
             if (baseEffects != null) {
                 for (StatusEffectInstance effectInstance : baseEffects) {
                     user.addStatusEffect(new StatusEffectInstance(
