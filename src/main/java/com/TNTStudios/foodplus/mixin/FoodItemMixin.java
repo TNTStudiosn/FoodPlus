@@ -15,16 +15,13 @@ import java.util.List;
 @Mixin(ItemStack.class)
 public abstract class FoodItemMixin {
 
-    @Inject(method = "finishUsing", at = @At("RETURN"), cancellable = true)
+    @Inject(method = "finishUsing", at = @At("RETURN"))
     private void onEat(World world, LivingEntity user, CallbackInfoReturnable<ItemStack> cir) {
-        ItemStack stack = (ItemStack) (Object) this; // Convierte el mixin en ItemStack
+        ItemStack stack = (ItemStack) (Object) this;
 
-        // Verifica si el item es comida
         if (stack.isFood()) {
-            // Obtiene los efectos de la poción aplicados a la comida
             List<StatusEffectInstance> effects = PotionUtil.getPotionEffects(stack);
 
-            // Aplica los efectos al jugador
             for (StatusEffectInstance effect : effects) {
                 if (effect != null) {
                     user.addStatusEffect(new StatusEffectInstance(effect));
@@ -33,3 +30,4 @@ public abstract class FoodItemMixin {
         }
     }
 }
+

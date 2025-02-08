@@ -2,6 +2,7 @@ package com.TNTStudios.foodplus.recipe;
 
 import com.google.gson.JsonObject;
 import net.minecraft.inventory.RecipeInputInventory;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.PotionItem;
 import net.minecraft.network.PacketByteBuf;
@@ -29,7 +30,7 @@ public class FoodPotionRecipe implements Recipe<RecipeInputInventory> {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem().isFood()) {
+                if (stack.isFood() && stack.getItem() instanceof Item) {
                     if (foodItem.isEmpty()) {
                         foodItem = stack;
                     } else {
@@ -56,7 +57,7 @@ public class FoodPotionRecipe implements Recipe<RecipeInputInventory> {
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
             if (!stack.isEmpty()) {
-                if (stack.getItem().isFood()) {
+                if (stack.isFood() && stack.getItem() instanceof Item) {
                     foodItem = stack;
                 } else if (stack.getItem() instanceof PotionItem) {
                     potionItem = stack;
