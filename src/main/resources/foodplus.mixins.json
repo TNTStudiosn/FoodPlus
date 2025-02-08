@@ -3,7 +3,8 @@
   "minVersion": "0.8",
   "package": "com.TNTStudios.foodplus.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
+  "mixins": ["CraftingResultSlotMixin",
+    "FoodPlusFinishUsingMixin"
   ],
   "injectors": {
     "defaultRequire": 1
