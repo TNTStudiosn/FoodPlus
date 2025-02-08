@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "id": "foodplus",
+  "version": "${version}",
+  "name": "FoodPlus",
+  "description": "",
+  "authors": [],
+  "contact": {},
+  "license": "All-Rights-Reserved",
+  "icon": "assets/foodplus/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "client": [
+      "com.TNTStudios.foodplus.client.FoodplusClient"
+    ],
+    "main": [
+      "com.TNTStudios.foodplus.Foodplus"
+    ]
+  },
+  "mixins": [
+    "foodplus.mixins.json",
+    {
+      "config": "foodplus.client.mixins.json",
+      "environment": "client"
+    }
+  ],
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "fabric": "*",
+    "minecraft": "${minecraft_version}"
+  }
+}
