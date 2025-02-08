@@ -24,55 +24,61 @@ public class FoodPotionRecipe implements Recipe<RecipeInputInventory> {
 
     @Override
     public boolean matches(RecipeInputInventory inventory, World world) {
-        ItemStack foodItem = ItemStack.EMPTY;
+        ItemStack baseItem = ItemStack.EMPTY;
         ItemStack potionItem = ItemStack.EMPTY;
 
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
             if (!stack.isEmpty()) {
-                if (stack.isFood() && stack.getItem() instanceof Item) {
-                    if (foodItem.isEmpty()) {
-                        foodItem = stack;
-                    } else {
-                        return false; // Solo una comida permitida
-                    }
-                } else if (stack.getItem() instanceof PotionItem) {
+                if (stack.getItem() instanceof PotionItem) {
                     if (potionItem.isEmpty()) {
                         potionItem = stack;
                     } else {
-                        return false; // Solo una poción permitida
+                        return false; // Solo se permite una poción
+                    }
+                } else {
+                    if (baseItem.isEmpty()) {
+                        baseItem = stack;
+                    } else {
+                        return false; // Solo se permite un item base
                     }
                 }
             }
         }
-
-        return !foodItem.isEmpty() && !potionItem.isEmpty();
+        return !baseItem.isEmpty() && !potionItem.isEmpty();
     }
+
 
     @Override
     public ItemStack craft(RecipeInputInventory inventory, DynamicRegistryManager registryManager) {
-        ItemStack foodItem = ItemStack.EMPTY;
+        ItemStack baseItem = ItemStack.EMPTY;
         ItemStack potionItem = ItemStack.EMPTY;
 
         for (int i = 0; i < inventory.size(); i++) {
             ItemStack stack = inventory.getStack(i);
             if (!stack.isEmpty()) {
-                if (stack.isFood() && stack.getItem() instanceof Item) {
-                    foodItem = stack;
-                } else if (stack.getItem() instanceof PotionItem) {
+                if (stack.getItem() instanceof PotionItem) {
                     potionItem = stack;
+                } else {
+                    baseItem = stack;
                 }
             }
         }
 
-        if (!foodItem.isEmpty() && !potionItem.isEmpty()) {
-            ItemStack result = new ItemStack(foodItem.getItem());
+        if (!baseItem.isEmpty() && !potionItem.isEmpty()) {
+            // Se hace una copia del item base para no modificar el original
+            ItemStack result = baseItem.copy();
+            result.setCount(1);  // Asegurarse de que el resultado sea un solo item
+
+            // Se aplica el efecto de la poción al item resultante.
+            // Esto añade la etiqueta NBT necesaria, de modo que en el mixin, al consumir
+            // el item, se extraigan los efectos.
             PotionUtil.setPotion(result, PotionUtil.getPotion(potionItem));
             return result;
         }
-
         return ItemStack.EMPTY;
     }
+
 
     @Override
     public boolean fits(int width, int height) {
